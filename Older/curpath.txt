@@ -1,1 +1,0 @@
-%CommonProgramFiles%\Microsoft Shared\Windows Live;%PATH%;C:\Python26;C:\Python26\Scripts;C:\Users\Patrick\Desktop\LongwoodCS\*%USERPROFILE%\AppData\Local\Microsoft\WindowsApps;;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps;C:\Users\Patrick\Desktop\Program\chromedriver.exe

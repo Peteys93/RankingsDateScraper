@@ -1,1 +1,0 @@
-﻿The program 'python.exe' has exited with code -1 (0xffffffff).
