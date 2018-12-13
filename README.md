@@ -1,6 +1,12 @@
 # RankingsDataScraper
 Rankings Data Scraper to Extract Date Information from rankings.the-elite.net
 
+Files:
+Funcs.py - Contains functions
+RankingsDataScraper.py - Run the functions in Funcs.py
+out/60+.xlsx - Excel file which contains the data and pivot table
+out/temp.csv - Current temp file being printed to by RankingsDataScraper.py, change your output file to any .csv file and copy into excel to use the data as I have in 60+.xlsx
+
 Current Version Data gathered - 12/12/2018 - 12/13/2018
 
 Future plans, create a user interface to make selection of level, upper and lower bounds, and filename to save easier.
