@@ -14,8 +14,7 @@ def openfile(filename):
 #launch url, manually change to desired page
 def openbrowser(url):
     #create a new Chrome session
-    chromedriver = os.getcwd() + "\\chromedriver.exe"
-    driver = webdriver.Chrome(chromedriver)
+    driver = webdriver.Chrome(os.getcwd() + "\\chromedriver.exe")
     driver.implicitly_wait(30)
     driver.get(url)
 

@@ -6,6 +6,7 @@ Release/*
 Out/timeinfo/*
 *.vssettings
 *.txt
+*.csv
 
 # User-specific files
 *.suo
