@@ -5,7 +5,7 @@ import Funcs as scraper
 #change the value of high_points for upper bound, low_points for lower bound of points to scrape, changefilename and url for filename and level to scrape from
 high_points, low_points = 100, 95
 filename = "\\timeinfo\\temp.csv"
-url = "https://rankings.the-elite.net/goldeneye/stage/facility"
+url = "https://rankings.the-elite.net/goldeneye/stage/surface1"
 
 #open file 'filename'
 f = scraper.openfile(filename)
