@@ -3,6 +3,7 @@
 
 Older/*
 Release/*
+Out/timeinfo/*
 
 # User-specific files
 *.suo
