@@ -4,8 +4,6 @@ import os
 import re
 import time
 
-#isaoverride, issaoverride, is00aoverride = False, False, False
-
 #open file, manually change name to desired
 def openfile(filename):
     f = open(os.getcwd() + filename, 'a')
@@ -16,13 +14,11 @@ def openbrowser(url):
     #create a new Chrome session
     driver = webdriver.Chrome(os.getcwd() + "\\chromedriver.exe")
     driver.implicitly_wait(30)
-    driver.get(url)
-
-    #wait for page to load, increase number if connection is slow
-    time.sleep(3)
+    driver.get(url)     
+    time.sleep(3) #wait for page to load, increase number if connection is slow, if desired, decrease if fast
     return driver
 
-#parse rankings page xml with bs4 to get Time, Points for use later
+#parse rankings page xml with bs4 to get Time, Points, then click on time link to get Date/Level/Name info from next page
 def parse_xml(f, driver, high_points, low_points):
     soup_level0=BeautifulSoup(driver.page_source, 'lxml')
 
@@ -48,25 +44,27 @@ def parse_xml(f, driver, high_points, low_points):
     ag_sa_times = len(ts_agent) + len(ts_secret_agent) 
     total_times = len(ts_agent) + len(ts_secret_agent) + len(ts_00_agent)
 
+    #loop through all times in agent, secret agent, and 00 agent lists
     i, offset = 0, 0    
-    while i <= total_times: # loop through all times with points desired to pull data on        
-        if(int(points[i]) <= high_points and int(points[i]) >= low_points): # change high_points and low_points at top for upper/lower bound, offset by 10 because of points leaders at top        
+    while i <= total_times:     
+        if(int(points[i]) <= high_points and int(points[i]) >= low_points): # change high_points and low_points in rankingsdatascraper.py for upper/lower bound        
             if i < ag_times: # get link and time string for agent, set isa True for printing/writing
-                link_string = '//*[@id="diff-0"]/table/tbody/tr[' + str(i-offset+2) + ']/td[3]/a[1]' #offset by 10, begin at tr[2]
+                link_string = '//*[@id="diff-0"]/table/tbody/tr[' + str(i-offset+2) + ']/td[3]/a[1]' #offset by number of points leaders, +2 here because tr[2] is first item we want to click in each column
                 ts_agent[i-offset] = re.sub(">", "", ts_agent[i-offset])
                 time_string = ts_agent            
                 isa, issa, is00a = True, False, False
-            elif i >= ag_times and i < ag_sa_times: # get link and time string for secret agent, set issa True for printing/writing
+            elif i >= ag_times and i < ag_sa_times: # get link and time string for secret agent, update bools for print/write
                 link_string = '//*[@id="diff-1"]/table/tbody/tr[' + str(i-ag_times-offset+2) + ']/td[3]/a[1]'
                 ts_secret_agent[i-ag_times-offset] = re.sub(">", "", ts_secret_agent[i-ag_times-offset])
                 time_string = ts_secret_agent            
                 isa, issa, is00a = False, True, False
-            elif i >= ag_sa_times and i < total_times: # get link and time string for 00agent, set is00a True for printing/writing
+            elif i >= ag_sa_times and i < total_times: # get link and time string for 00agent, update bools for print/write
                 link_string = '//*[@id="diff-2"]/table/tbody/tr[' + str(i-ag_sa_times-offset+2) + ']/td[3]/a[1]'
                 ts_00_agent[i-ag_sa_times-offset] = re.sub(">", "", ts_00_agent[i-ag_sa_times-offset])
                 time_string = ts_00_agent            
                 isa, issa, is00a = False, False, True
-                   
+            
+            #click the link given by the xpath for the link_string set above    
             python_button = driver.find_element_by_xpath(link_string)
             python_button.click()
 
@@ -107,7 +105,8 @@ def parse_xml(f, driver, high_points, low_points):
                 print(name_string_final, level_string_final, time_string[i-ag_sa_times-offset], points[i], date_string_final[0])
                 f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_sa_times-offset] + ',' +   points[i] + ',' + date_string_final[0] + '\n')
 
+            #go back when finished parsing date/name/level info to allow the program to move onto the next link
             driver.execute_script("window.history.go(-1)")
-        elif int(points[i]) > 100:
+        elif int(points[i]) > 100: # set the offset based on the number of points leaders at the top of the page (as they are read into the 'points' parse from earlier)
             offset += 1
         i += 1
