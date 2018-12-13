@@ -4,6 +4,8 @@
 Older/*
 Release/*
 Out/timeinfo/*
+*.vssettings
+*.txt
 
 # User-specific files
 *.suo
