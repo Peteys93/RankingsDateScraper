@@ -55,39 +55,29 @@ def parse_xml(f, driver, high_points, low_points, select_a, select_sa, select_00
                 #parse - times page xml with bs4 for to get Name, Date, and Level Name/Difficulty
                 soup_level1=BeautifulSoup(driver.page_source, 'lxml')
 
-                #parse - zoom closer to name, level, and date on timespage, probably a better way to parse this for cleaner regex, but this works
-                parse_name = soup_level1.find_all(class_='user')
-                parse_level = soup_level1.find_all("h1")
-                parse_date = soup_level1.find_all("ul")            
-            
-                name_string = str(parse_name)
-                level_string = str(parse_level)
-                date_string = str(parse_date)
+                #parse - name, level, and date on timespage
+                name_string_final = soup_level1.select_one("#content .user").text.strip()
 
-                ns2 = re.findall("[>][\w][A-Za-z\u00fc\-\s]*", name_string)
-                name_string_final = re.sub("[>]", "", str(ns2[0]))
-
-                ls2 = re.findall("[\t][A-Z][a-z]+[012A-Za-z\s\t]*[Agent\t]+", level_string)
-                ls3 = re.sub("[\t]", " ", str(ls2[0]))
-                level_string_final = ls3.strip()
-                      
-                #check if date is listed, set to blank space if not listed.
-                if("<li><strong>Achieved:</strong> " in date_string):
-                    date_string = date_string.split("<li><strong>Achieved:</strong> ")
-                    date_string_final = date_string[1].split("</li>")
+                parse_level = soup_level1.select_one("#content > h1").text.strip()
+                level_string = re.split("\t\d:", parse_level)
+                level_string_final = level_string[0].replace("\t", " ")
+                
+                parse_date = soup_level1.select_one("#time-details > li").text.strip()
+                if("Achieved" in parse_date): #check if date is listed, set to blank space if not listed.
+                    date_string_final = parse_date.replace("Achieved: ", "")
                 else:
-                    date_string_final[0] = ""        
+                    date_string_final = ""        
         
                 #print to cmd and file, alter time string for a, sa, and 00a
                 if isa and select_a:
-                    print(name_string_final, level_string_final, time_string[i], points[i], date_string_final[0])
-                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i] + ',' +   points[i] + ',' + date_string_final[0] + '\n')
+                    print(name_string_final, level_string_final, time_string[i], points[i], date_string_final)
+                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i] + ',' +   points[i] + ',' + date_string_final + '\n')
                 elif issa and select_sa:
-                    print(name_string_final, level_string_final, time_string[i-ag_times], points[i], date_string_final[0])
-                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_times] + ',' +   points[i] + ',' + date_string_final[0] + '\n')
+                    print(name_string_final, level_string_final, time_string[i-ag_times], points[i], date_string_final)
+                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_times] + ',' +   points[i] + ',' + date_string_final + '\n')
                 elif is00a and select_00a:
-                    print(name_string_final, level_string_final, time_string[i-ag_sa_times], points[i], date_string_final[0])
-                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_sa_times] + ',' +   points[i] + ',' + date_string_final[0] + '\n')
+                    print(name_string_final, level_string_final, time_string[i-ag_sa_times], points[i], date_string_final)
+                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_sa_times] + ',' +   points[i] + ',' + date_string_final + '\n')
 
                 #go back when finished parsing date/name/level info to allow the program to move onto the next link
                 driver.execute_script("window.history.go(-1)")          
