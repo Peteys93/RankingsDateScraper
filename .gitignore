@@ -3,10 +3,9 @@
 
 Older/*
 Release/*
-Out/timeinfo/*
+out/*.csv
 *.vssettings
 *.txt
-*.csv
 
 # User-specific files
 *.suo
