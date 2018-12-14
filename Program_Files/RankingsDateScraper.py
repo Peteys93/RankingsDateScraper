@@ -9,8 +9,8 @@ import Funcs as scraper
 
 high_points, low_points = 100, 95 
 select_a, select_sa, select_00a = True, True, True 
-game, level = "goldeneye", "aztec" 
-filename = "test2.csv" 
+game, level = "perfect-dark", "extraction" 
+filename = "test3.csv" 
 
 f = scraper.openfile("\\out\\" + filename)
 

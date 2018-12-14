@@ -7,11 +7,12 @@ import time
 #open file, manually change name to desired
 def openfile(filename):
     f = open(os.getcwd() + filename, 'a')
+    if not os.path.getsize(os.getcwd() + filename) > 0:
+        f.write("Name, Level, Time, Points, Date, Year\n")
     return f
 
 #launch url, manually change to desired page
 def openbrowser(url):
-    #create a new Chrome session
     driver = webdriver.Chrome(os.getcwd() + "\\chromedriver.exe")
     driver.implicitly_wait(30)
     driver.get(url)     
@@ -66,18 +67,19 @@ def parse_xml(f, driver, high_points, low_points, select_a, select_sa, select_00
                 if("Achieved" in parse_date): #check if date is listed, set to blank space if not listed.
                     date_string_final = parse_date.replace("Achieved: ", "")
                 else:
-                    date_string_final = ""        
+                    date_string_final = ""
+                year_string_final = re.search('\d{4}', date_string_final).group() #extract year to remove extra step in excel for pivot chart
         
                 #print to cmd and file, alter time string for a, sa, and 00a
                 if isa and select_a:
                     print(name_string_final, level_string_final, time_string[i], points[i], date_string_final)
-                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i] + ',' +   points[i] + ',' + date_string_final + '\n')
+                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i] + ',' +   points[i] + ',' + date_string_final + ',' + year_string_final + '\n')
                 elif issa and select_sa:
                     print(name_string_final, level_string_final, time_string[i-ag_times], points[i], date_string_final)
-                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_times] + ',' +   points[i] + ',' + date_string_final + '\n')
+                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_times] + ',' +   points[i] + ',' + date_string_final + ',' + year_string_final + '\n')
                 elif is00a and select_00a:
                     print(name_string_final, level_string_final, time_string[i-ag_sa_times], points[i], date_string_final)
-                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_sa_times] + ',' +   points[i] + ',' + date_string_final + '\n')
+                    f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_sa_times] + ',' +   points[i] + ',' + date_string_final + ',' + year_string_final + '\n')
 
                 #go back when finished parsing date/name/level info to allow the program to move onto the next link
                 driver.execute_script("window.history.go(-1)")          
