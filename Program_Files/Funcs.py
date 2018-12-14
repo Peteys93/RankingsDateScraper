@@ -28,17 +28,9 @@ def parse_xml(f, driver, high_points, low_points):
     points= re.findall("\d+", points_string)
 
     #parse agent, sa, and 00a times, store for later, add up lengths of the lists for later use as well    
-    time_agent = soup_level0.find_all("div", id="diff-0")
-    time_string_agent = str(time_agent)
-    ts_agent = re.findall(">\d+:\d\d+|N\/A", time_string_agent) #must have > here as start char and take out later, to avoid picking up other numbers on page
-
-    time_secret_agent = soup_level0.find_all("div", id="diff-1")
-    time_string_secret_agent = str(time_secret_agent)
-    ts_secret_agent = re.findall(">\d+:\d\d+|N\/A", time_string_secret_agent)
-
-    time_00_agent = soup_level0.find_all("div", id="diff-2")
-    time_string_00_agent = str(time_00_agent)
-    ts_00_agent = re.findall(">\d+:\d\d+|N\/A", time_string_00_agent)
+    ts_agent = [a.text.strip() for a in soup_level0.select("#diff-0 .time")]
+    ts_secret_agent = [b.text.strip() for b in soup_level0.select("#diff-1 .time")]
+    ts_00_agent = [c.text.strip() for c in soup_level0.select("#diff-2 .time")]    
 
     ag_times = len(ts_agent)
     ag_sa_times = len(ts_agent) + len(ts_secret_agent) 
@@ -50,17 +42,17 @@ def parse_xml(f, driver, high_points, low_points):
         if(int(points[i]) <= high_points and int(points[i]) >= low_points): # change high_points and low_points in rankingsdatascraper.py for upper/lower bound        
             if i < ag_times: # get link and time string for agent, set isa True for printing/writing
                 link_string = '//*[@id="diff-0"]/table/tbody/tr[' + str(i-offset+2) + ']/td[3]/a[1]' #offset by number of points leaders, +2 here because tr[2] is first item we want to click in each column
-                ts_agent[i-offset] = re.sub(">", "", ts_agent[i-offset])
+                #ts_agent[i-offset] = re.sub(">", "", ts_agent[i-offset])
                 time_string = ts_agent            
                 isa, issa, is00a = True, False, False
             elif i >= ag_times and i < ag_sa_times: # get link and time string for secret agent, update bools for print/write
                 link_string = '//*[@id="diff-1"]/table/tbody/tr[' + str(i-ag_times-offset+2) + ']/td[3]/a[1]'
-                ts_secret_agent[i-ag_times-offset] = re.sub(">", "", ts_secret_agent[i-ag_times-offset])
+                #ts_secret_agent[i-ag_times-offset] = re.sub(">", "", ts_secret_agent[i-ag_times-offset])
                 time_string = ts_secret_agent            
                 isa, issa, is00a = False, True, False
             elif i >= ag_sa_times and i < total_times: # get link and time string for 00agent, update bools for print/write
                 link_string = '//*[@id="diff-2"]/table/tbody/tr[' + str(i-ag_sa_times-offset+2) + ']/td[3]/a[1]'
-                ts_00_agent[i-ag_sa_times-offset] = re.sub(">", "", ts_00_agent[i-ag_sa_times-offset])
+                #ts_00_agent[i-ag_sa_times-offset] = re.sub(">", "", ts_00_agent[i-ag_sa_times-offset])
                 time_string = ts_00_agent            
                 isa, issa, is00a = False, False, True
             
