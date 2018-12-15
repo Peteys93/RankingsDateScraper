@@ -8,7 +8,7 @@ import time
 def openfile(filename):
     f = open(os.getcwd() + filename, 'a')
     if not os.path.getsize(os.getcwd() + filename) > 0:
-        f.write("Name, Level, Time, Points, Date, Year\n")
+        f.write("Name,Level,Time,Points,Date,Year\n")
     return f
 
 #launch url, manually change to desired page
@@ -57,18 +57,17 @@ def parse_xml(f, driver, high_points, low_points, select_a, select_sa, select_00
                 soup_level1=BeautifulSoup(driver.page_source, 'lxml')
 
                 #parse - name, level, and date on timespage
-                name_string_final = soup_level1.select_one("#content .user").text.strip()
+                name_string_final = soup_level1.select_one("#content .user").text.encode('ascii', errors ='ignore').strip().decode('ascii')
 
                 parse_level = soup_level1.select_one("#content > h1").text.strip()
                 level_string = re.split("\t\d:", parse_level)
                 level_string_final = level_string[0].replace("\t", " ")
                 
                 parse_date = soup_level1.select_one("#time-details > li").text.strip()
-                if("Achieved" in parse_date): #check if date is listed, set to blank space if not listed.
+                date_string_final, year_string_final = "", "" #no date or year by default
+                if "Achieved" in parse_date: #if date on page
                     date_string_final = parse_date.replace("Achieved: ", "")
-                else:
-                    date_string_final = ""
-                year_string_final = re.search('\d{4}', date_string_final).group() #extract year to remove extra step in excel for pivot chart
+                    year_string_final = re.search('\d{4}', date_string_final).group() #extract year to remove extra step in excel for pivot chart
         
                 #print to cmd and file, alter time string for a, sa, and 00a
                 if isa and select_a:
