@@ -81,5 +81,6 @@ def parse_xml(f, driver, high_points, low_points, select_a, select_sa, select_00
                     f.write(name_string_final + ',' + level_string_final + ',' + time_string[i-ag_sa_times] + ',' +   points[i] + ',' + date_string_final + ',' + year_string_final + '\n')
 
                 #go back when finished parsing date/name/level info to allow the program to move onto the next link
-                driver.execute_script("window.history.go(-1)")          
+                driver.execute_script("window.history.go(-1)")
+                time.sleep(2)
         i += 1
