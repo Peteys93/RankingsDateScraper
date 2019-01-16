@@ -1,5 +1,5 @@
-# RankingsDataScraper
-Rankings Data Scraper to Extract Date Information from rankings.the-elite.net
+# RankingsDateScraper
+Rankings Date Scraper to Extract Date Information from rankings.the-elite.net
 
 Files:
 Funcs.py - Contains functions to open file, open webpage, and parse the xml of rankings.the-elite.net
